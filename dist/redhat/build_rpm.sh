@@ -64,12 +64,14 @@ fi
 SCYLLA_VERSION=$(cat SCYLLA-VERSION-FILE)
 SCYLLA_RELEASE=$(cat SCYLLA-RELEASE-FILE)
 VERSION=$SCYLLA_VERSION-$SCYLLA_RELEASE
+MUSTACHE_DIST="\"redhat\": true"
 
 RPMBUILD=$(readlink -f ../)
 mkdir -p $RPMBUILD/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 ln -fv $RELOC_PKG $RPMBUILD/SOURCES/
 pystache dist/redhat/scylla-jmx.spec.mustache "{ \"version\": \"$SCYLLA_VERSION\", \"release\": \"$SCYLLA_RELEASE\", \"product\": \"$PRODUCT\", \"$PRODUCT\": true }" > $RPMBUILD/SPECS/scylla-jmx.spec
+pystache dist/common/systemd/scylla-jmx.service.mustache "{ $MUSTACHE_DIST }" > $RPMBUILD/SOURCES/scylla-jmx.service
 
 # this rpm can be install on both fedora / centos7, so drop distribution name from the file name
 rpmbuild -ba --define "_topdir $RPMBUILD" --undefine "dist" $RPM_JOBS_OPTS $RPMBUILD/SPECS/scylla-jmx.spec
