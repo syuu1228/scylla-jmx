@@ -53,7 +53,6 @@ jobs:
           startsWith(github.ref, 'refs/tags/')
         run: |
           gh release create ${GITHUB_REF_NAME} \
-            --discussion-category Releases \
             --notes-file release-notes.md \
             --title ${VERSION} \
             build/scylla-jmx-*.noarch.tar.gz \
